@@ -53,7 +53,7 @@
       packages.${system} = {
         default = pkgs.stdenv.mkDerivation {
           name = "desktop";
-          version = "0.2";
+          version = "0.3";
           src = pkgs.lib.cleanSource ./.;
 
           nativeBuildInputs = with pkgs; [
