@@ -45,8 +45,13 @@
 
         # --- this is the brightnessctl for anyone that cannot read it ---
         # it makes the monitor bright and not bright depending on how you configure it
-        pkgs.brightnessctl
+        pkgs.swww
         pkgs.hyprsunset
+        pkgs.brightnessctl
+        pkgs.zenity
+        pkgs.imagemagick
+        pkgs.sox
+        pkgs.psmisc
       ];
     in
     {
@@ -63,7 +68,7 @@
             makeWrapper # Required for wrapProgram
           ];
 
-          buildInputs = extraPackages ++ [ pkgs.gjs ];
+          buildInputs = astalPackages ++ [ pkgs.gjs ];
 
           installPhase = ''
             runHook preInstall
@@ -80,17 +85,7 @@
 
             # --- Step 2: Wrap the App ---
             wrapProgram $out/bin/${pname} \
-              --prefix PATH : "${
-                pkgs.lib.makeBinPath [
-                  pkgs.swww
-                  pkgs.hyprsunset
-                  pkgs.brightnessctl
-                  pkgs.zenity
-                  pkgs.imagemagick
-                  pkgs.sox
-                  pkgs.psmisc
-                ]
-              }"
+              --prefix PATH : "${pkgs.lib.makeBinPath extraPackages}"
 
             # --- Step 3: Create the Controller Script ---
             echo "#!${pkgs.bash}/bin/bash" > $out/bin/${pname}-ctl
@@ -105,10 +100,11 @@
       devShells.${system} = {
         default = pkgs.mkShell {
           buildInputs = [
-            (ags.packages.${system}.default.override {
-              inherit extraPackages;
-            })
+            extraPackages
             pkgs.nodejs
+            (ags.packages.${system}.default.override {
+              extraPackages = astalPackages;
+            })
           ];
         };
       };

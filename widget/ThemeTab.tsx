@@ -13,6 +13,12 @@ function getCurrentWallpaper(): string | null {
         }
     } catch (error) {
         console.log("swww daemon not running or query failed")
+        console.log("Attempting to start swww daemon...")
+        try {
+            exec("swww-daemon")
+        } catch (err) {
+            console.error(`failed to start swww daemon: ${err.error}`)
+        }
     }
     return null
 }
@@ -152,7 +158,7 @@ function promptWallpaper() {
             // Try to initialize swww
             try {
                 console.log("Attempting to start swww daemon...")
-                exec("swww init")
+                exec("swww-daemon")
                 // Wait a bit for daemon to start, then try setting wallpaper again
                 setTimeout(() => {
                     try {
